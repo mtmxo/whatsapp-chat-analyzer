@@ -1,5 +1,10 @@
 # whatsapp-chat-analyzer
 
+[![Test](https://github.com/mtmxo/whatsapp-chat-analyzer/actions/workflows/tests.yml/badge.svg)](https://github.com/mtmxo/whatsapp-chat-analyzer/actions/workflows/tests.yml)
+[![PyPI](https://img.shields.io/pypi/v/whatsapp-chat-analyzer)](https://pypi.org/project/whatsapp-chat-analyzer/)
+[![Python](https://img.shields.io/pypi/pyversions/whatsapp-chat-analyzer)](https://pypi.org/project/whatsapp-chat-analyzer/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Parser robusto per le chat WhatsApp esportate in formato `.txt`, con riconoscimento
 automatico del formato, modelli dati puliti ed export verso JSON, CSV e pandas.
 
