@@ -35,10 +35,13 @@ class DetectorRegistry:
 
         day_first = self._is_day_first(dates)
         year_token = "%Y" if self._year_has_4_digits(dates) else "%y"
-        date_part = (
-            f"%d/%m/{year_token}" if day_first else f"%m/%d/{year_token}"
-        )
-        time_part = "%H:%M:%S" if self._has_seconds(times) else "%H:%M"
+        date_part = f"%d/%m/{year_token}" if day_first else f"%m/%d/{year_token}"
+
+        twelve_hour = self._is_twelve_hour(times)
+        hour_token = "%I" if twelve_hour else "%H"
+        time_part = f"{hour_token}:%M:%S" if self._has_seconds(times) else f"{hour_token}:%M"
+        if twelve_hour:
+            time_part += " %p"
         return f"{date_part}, {time_part}"
 
     def _is_day_first(self, dates: list[str]) -> bool:
@@ -56,5 +59,9 @@ class DetectorRegistry:
     def _year_has_4_digits(self, dates: list[str]) -> bool:
         return any(len(date.split("/")[2]) == 4 for date in dates)
 
+    def _is_twelve_hour(self, times: list[str]) -> bool:
+        return any(re.search(r"[APap][Mm]", t) for t in times)
+
     def _has_seconds(self, times: list[str]) -> bool:
-        return any(t.count(":") == 2 for t in times)
+        # si conta solo la parte numerica, ignorando l'eventuale suffisso AM/PM
+        return any(t.split()[0].count(":") == 2 for t in times)

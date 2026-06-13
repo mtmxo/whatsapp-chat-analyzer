@@ -21,3 +21,15 @@ def test_parse_file_accepts_config():
     cfg = ParserConfig(locale="it")
     chat = parse_file(FIXTURES / "android_it.txt", config=cfg)
     assert len(chat) == 3
+
+
+def test_parse_ios_english_media():
+    from datetime import datetime
+
+    from whatsapp_analyzer.models import MediaKind, MessageType
+    chat = parse_file(FIXTURES / "ios_en.txt")
+    assert chat[0].sender == "John"
+    # 9:36:00 PM in formato 12h deve diventare le 21:36
+    assert chat[0].timestamp == datetime(2024, 6, 12, 21, 34, 5)
+    assert chat[-1].type == MessageType.MEDIA
+    assert chat[-1].media_kind == MediaKind.IMAGE

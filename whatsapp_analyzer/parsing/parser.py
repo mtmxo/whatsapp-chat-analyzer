@@ -52,9 +52,13 @@ class WhatsAppParser:
         for line in lines:
             match = chat_format.header_regex.match(line)
             if match:
+                # Normalizza lo spazio prima di AM/PM così da combaciare con "%p"
+                # (alcuni export scrivono "9:36PM", altri "9:36 PM").
+                raw_time = match.group("time").upper().replace("AM", " AM").replace("PM", " PM")
+                raw_time = " ".join(raw_time.split())
                 current = _RawMessage(
                     timestamp=datetime.strptime(
-                        f"{match.group('date')}, {match.group('time')}",
+                        f"{match.group('date')}, {raw_time}",
                         chat_format.datetime_format,
                     ),
                     sender=match.group("sender"),

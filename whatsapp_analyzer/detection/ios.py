@@ -9,7 +9,8 @@ from .base import ChatFormat, FormatDetector
 # La data/ora è gestita come gruppo unico e poi passata a strptime.
 # Il sender è opzionale: le righe di sistema non hanno "Sender:".
 _IOS_HEADER = re.compile(
-    r"^\[(?P<date>\d{1,2}/\d{1,2}/\d{2,4}), (?P<time>\d{1,2}:\d{2}(?::\d{2})?)\] "
+    r"^\[(?P<date>\d{1,2}/\d{1,2}/\d{2,4}), "
+    r"(?P<time>\d{1,2}:\d{2}(?::\d{2})?(?:\s?[APap][Mm])?)\] "
     r"(?:(?P<sender>[^:]+): )?(?P<text>.*)$"
 )
 
