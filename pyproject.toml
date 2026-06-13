@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "whatsapp-chat-analyzer"
+version = "0.1.0"
+description = "Parser e analisi per chat WhatsApp esportate in formato .txt"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "marco cerbella" }]
+keywords = ["whatsapp", "chat", "parser", "analysis"]
+
+[project.optional-dependencies]
+pandas = ["pandas>=1.5"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+wa-analyzer = "whatsapp_analyzer.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["whatsapp_analyzer"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
