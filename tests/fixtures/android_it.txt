@@ -1,0 +1,4 @@
+12/06/24, 21:34 - I messaggi sono crittografati con la crittografia end-to-end
+12/06/24, 21:35 - Mario: ciao Luigi
+12/06/24, 21:36 - Luigi: ciao Mario
+come stai?
