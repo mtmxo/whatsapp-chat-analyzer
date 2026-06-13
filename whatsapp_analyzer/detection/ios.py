@@ -1,0 +1,21 @@
+"""Detector per il formato di export iOS: [data, ora] Sender: testo."""
+
+from __future__ import annotations
+
+import re
+
+from .base import ChatFormat, FormatDetector
+
+# La data/ora è gestita come gruppo unico e poi passata a strptime.
+# Il sender è opzionale: le righe di sistema non hanno "Sender:".
+_IOS_HEADER = re.compile(
+    r"^\[(?P<date>\d{1,2}/\d{1,2}/\d{2,4}), (?P<time>\d{1,2}:\d{2}(?::\d{2})?)\] "
+    r"(?:(?P<sender>[^:]+): )?(?P<text>.*)$"
+)
+
+
+class IosFormatDetector(FormatDetector):
+    def detect(self, sample_lines: list[str]) -> ChatFormat | None:
+        if any(_IOS_HEADER.match(line) for line in sample_lines):
+            return ChatFormat(header_regex=_IOS_HEADER, datetime_format="")
+        return None

@@ -19,3 +19,41 @@ def test_format_detector_is_abstract():
         assert False, "FormatDetector non deve essere istanziabile"
     except TypeError:
         pass
+
+
+from whatsapp_analyzer.detection.android import AndroidFormatDetector
+from whatsapp_analyzer.detection.ios import IosFormatDetector
+
+
+def test_ios_detector_matches_ios_lines():
+    lines = ["[12/06/24, 21:34:05] Mario: ciao"]
+    fmt = IosFormatDetector().detect(lines)
+    assert fmt is not None
+    m = fmt.header_regex.match(lines[0])
+    assert m.group("sender") == "Mario"
+    assert m.group("text") == "ciao"
+
+
+def test_ios_detector_rejects_android_lines():
+    lines = ["12/06/24, 21:34 - Mario: ciao"]
+    assert IosFormatDetector().detect(lines) is None
+
+
+def test_android_detector_matches_android_lines():
+    lines = ["12/06/24, 21:34 - Mario: ciao"]
+    fmt = AndroidFormatDetector().detect(lines)
+    assert fmt is not None
+    m = fmt.header_regex.match(lines[0])
+    assert m.group("sender") == "Mario"
+    assert m.group("text") == "ciao"
+
+
+def test_android_detector_rejects_ios_lines():
+    lines = ["[12/06/24, 21:34:05] Mario: ciao"]
+    assert AndroidFormatDetector().detect(lines) is None
+
+
+def test_android_detector_matches_system_line_without_sender():
+    # le righe di sistema non hanno "sender:" ma devono comunque far riconoscere il formato
+    lines = ["12/06/24, 21:34 - I messaggi sono crittografati"]
+    assert AndroidFormatDetector().detect(lines) is not None
