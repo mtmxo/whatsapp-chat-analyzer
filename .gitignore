@@ -1,0 +1,18 @@
+CLAUDE.md
+
+# Docs di lavoro interne (non pubblicate)
+docs/superpowers/
+
+# uv (lock file non tracciato per una libreria)
+uv.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
