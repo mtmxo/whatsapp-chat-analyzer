@@ -54,3 +54,20 @@ class Chat:
 
     def filter(self, predicate: Callable[[Message], bool]) -> "Chat":
         return Chat([m for m in self.messages if predicate(m)])
+
+    def to_json(self) -> str:
+        from .export.json_exporter import JsonExporter
+        return JsonExporter().export(self)
+
+    @classmethod
+    def from_json(cls, data: str) -> "Chat":
+        from .export.json_exporter import JsonExporter
+        return JsonExporter().load(data)
+
+    def to_csv(self) -> str:
+        from .export.csv_exporter import CsvExporter
+        return CsvExporter().export(self)
+
+    def to_dataframe(self):
+        from .export.dataframe_exporter import DataFrameExporter
+        return DataFrameExporter().export(self)
