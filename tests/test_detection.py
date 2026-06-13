@@ -57,3 +57,36 @@ def test_android_detector_matches_system_line_without_sender():
     # le righe di sistema non hanno "sender:" ma devono comunque far riconoscere il formato
     lines = ["12/06/24, 21:34 - I messaggi sono crittografati"]
     assert AndroidFormatDetector().detect(lines) is not None
+
+
+import pytest
+
+from whatsapp_analyzer.detection.registry import DetectorRegistry
+from whatsapp_analyzer.exceptions import FormatDetectionError
+
+
+def test_registry_detects_android():
+    fmt = DetectorRegistry().detect(["12/06/24, 21:34 - Mario: ciao"])
+    assert fmt.datetime_format == "%d/%m/%y, %H:%M"
+
+
+def test_registry_detects_ios_with_seconds_and_4digit_year():
+    fmt = DetectorRegistry().detect(["[12/06/2024, 21:34:05] Mario: ciao"])
+    assert fmt.datetime_format == "%d/%m/%Y, %H:%M:%S"
+
+
+def test_registry_disambiguates_month_first():
+    # 13 nella seconda posizione => quella posizione è il giorno => mese per primo (MM/DD)
+    fmt = DetectorRegistry().detect(["06/13/24, 21:34 - Mario: ciao"])
+    assert fmt.datetime_format == "%m/%d/%y, %H:%M"
+
+
+def test_registry_ambiguous_uses_locale_default():
+    # nessun valore > 12: ambiguo. locale "it" => giorno per primo
+    fmt = DetectorRegistry(locale="it").detect(["06/07/24, 21:34 - Mario: ciao"])
+    assert fmt.datetime_format == "%d/%m/%y, %H:%M"
+
+
+def test_registry_raises_when_no_format():
+    with pytest.raises(FormatDetectionError):
+        DetectorRegistry().detect(["questo non e' un header valido"])
