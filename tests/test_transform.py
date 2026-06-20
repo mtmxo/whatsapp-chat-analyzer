@@ -48,7 +48,7 @@ def test_anonymizer_replaces_sender_consistently():
     m3 = anon.apply(_msg("Mario", datetime(2024, 6, 2)))
     assert m1.sender == "User1"
     assert m2.sender == "User2"
-    assert m3.sender == "User1"  # stessa mappatura per lo stesso autore
+    assert m3.sender == "User1"  # same mapping for the same author
 
 
 def test_anonymizer_leaves_system_sender_none():
@@ -61,6 +61,6 @@ def test_anonymizer_does_not_touch_text():
     anon = Anonymizer()
     msg = Message(
         timestamp=datetime(2024, 6, 1), sender="Mario",
-        text="ciao Mario", type=MessageType.TEXT,
+        text="hello Mario", type=MessageType.TEXT,
     )
-    assert anon.apply(msg).text == "ciao Mario"
+    assert anon.apply(msg).text == "hello Mario"

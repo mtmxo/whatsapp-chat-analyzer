@@ -1,4 +1,4 @@
-"""Configurazione centralizzata del parser e punto di dependency injection."""
+"""Centralized parser configuration and dependency-injection point."""
 
 from __future__ import annotations
 
@@ -16,11 +16,11 @@ class ParserConfig:
     detectors: list[FormatDetector] | None = None
     locale: str = "it"
 
-    # classificazione
+    # classification
     classifier: MessageClassifier | None = None
 
-    # trasformazioni (ordine lista = ordine di applicazione)
+    # transformations (list order = order of application)
     transformers: list[MessageTransformer] = field(default_factory=list)
 
-    # salvaguardie
+    # safeguards
     max_lines_per_message: int = 1000

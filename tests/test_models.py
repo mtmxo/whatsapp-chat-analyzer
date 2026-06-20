@@ -4,13 +4,13 @@ from whatsapp_analyzer.exceptions import ParseError, FormatDetectionError
 
 
 def test_format_detection_error_is_parse_error():
-    # FormatDetectionError deve essere catturabile come ParseError generico
+    # FormatDetectionError must be catchable as a generic ParseError
     assert issubclass(FormatDetectionError, ParseError)
 
 
 def test_parse_error_message():
-    err = ParseError("riga malformata")
-    assert str(err) == "riga malformata"
+    err = ParseError("malformed line")
+    assert str(err) == "malformed line"
 
 
 from datetime import datetime
@@ -29,13 +29,13 @@ def _msg(sender, text, type_=MessageType.TEXT, ts=None, media_kind=None):
 
 
 def test_message_is_immutable():
-    msg = _msg("Mario", "ciao")
+    msg = _msg("Mario", "hello")
     with pytest.raises(Exception):
-        msg.text = "modificato"
+        msg.text = "changed"
 
 
 def test_message_defaults_media_kind_none():
-    assert _msg("Mario", "ciao").media_kind is None
+    assert _msg("Mario", "hello").media_kind is None
 
 
 def test_chat_behaves_like_sequence():
@@ -48,7 +48,7 @@ def test_chat_behaves_like_sequence():
 def test_chat_participants_excludes_system_none():
     chat = Chat([
         _msg("Mario", "a"),
-        _msg(None, "I messaggi sono crittografati", MessageType.SYSTEM),
+        _msg(None, "Messages are encrypted", MessageType.SYSTEM),
         _msg("Luigi", "b"),
     ])
     assert chat.participants == {"Mario", "Luigi"}
@@ -59,4 +59,4 @@ def test_chat_filter_returns_new_chat():
     filtered = chat.filter(lambda m: m.sender == "Mario")
     assert isinstance(filtered, Chat)
     assert len(filtered) == 1
-    assert len(chat) == 2  # l'originale non cambia
+    assert len(chat) == 2  # the original is unchanged

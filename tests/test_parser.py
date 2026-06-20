@@ -6,7 +6,7 @@ from whatsapp_analyzer.models import MessageType
 from whatsapp_analyzer.parsing.parser import WhatsAppParser
 from whatsapp_analyzer.transform.filters import SystemMessageFilter
 
-ANDROID = "12/06/24, 21:34 - Mario: ciao"
+ANDROID = "12/06/24, 21:34 - Mario: hello"
 
 
 def parse(text, config=None):
@@ -18,20 +18,20 @@ def test_parses_single_message():
     assert len(chat) == 1
     msg = chat[0]
     assert msg.sender == "Mario"
-    assert msg.text == "ciao"
+    assert msg.text == "hello"
     assert msg.type == MessageType.TEXT
     assert msg.timestamp == datetime(2024, 6, 12, 21, 34)
 
 
 def test_parses_multiline_message():
-    text = "12/06/24, 21:34 - Mario: prima riga\nseconda riga\nterza riga"
+    text = "12/06/24, 21:34 - Mario: first line\nsecond line\nthird line"
     chat = parse(text)
     assert len(chat) == 1
-    assert chat[0].text == "prima riga\nseconda riga\nterza riga"
+    assert chat[0].text == "first line\nsecond line\nthird line"
 
 
 def test_system_message_has_none_sender():
-    text = "12/06/24, 21:34 - I messaggi sono crittografati con la crittografia end-to-end"
+    text = "12/06/24, 21:34 - Messages are encrypted with end-to-end encryption"
     chat = parse(text)
     assert chat[0].sender is None
     assert chat[0].type == MessageType.SYSTEM
@@ -39,8 +39,8 @@ def test_system_message_has_none_sender():
 
 def test_transformer_chain_drops_messages():
     text = (
-        "12/06/24, 21:34 - I messaggi sono crittografati\n"
-        "12/06/24, 21:35 - Mario: ciao"
+        "12/06/24, 21:34 - Messages are encrypted\n"
+        "12/06/24, 21:35 - Mario: hello"
     )
     cfg = ParserConfig(transformers=[SystemMessageFilter()])
     chat = parse(text, cfg)
@@ -49,18 +49,18 @@ def test_transformer_chain_drops_messages():
 
 
 def test_max_lines_safeguard_emits_warning():
-    body = "\n".join(["riga"] * 10)
-    text = f"12/06/24, 21:34 - Mario: inizio\n{body}"
+    body = "\n".join(["line"] * 10)
+    text = f"12/06/24, 21:34 - Mario: start\n{body}"
     cfg = ParserConfig(max_lines_per_message=3)
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         chat = parse(text, cfg)
     assert any("max_lines_per_message" in str(w.message) for w in caught)
-    # il messaggio viene troncato a 3 righe totali (header + 2 continuazioni)
+    # the message is truncated to 3 total lines (header + 2 continuations)
     assert chat[0].text.count("\n") == 2
 
 
 def test_ios_format_parsed():
-    chat = parse("[12/06/2024, 21:34:05] Mario: ciao")
+    chat = parse("[12/06/2024, 21:34:05] Mario: hello")
     assert chat[0].sender == "Mario"
     assert chat[0].timestamp == datetime(2024, 6, 12, 21, 34, 5)

@@ -1,4 +1,4 @@
-"""Detector per il formato di export Android: data, ora - Sender: testo."""
+"""Detector for the Android export format: date, time - Sender: text."""
 
 from __future__ import annotations
 

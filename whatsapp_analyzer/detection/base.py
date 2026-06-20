@@ -1,4 +1,4 @@
-"""Astrazioni per la detection del formato di una chat."""
+"""Abstractions for detecting the format of a chat."""
 
 from __future__ import annotations
 
@@ -9,15 +9,15 @@ from typing import Pattern
 
 @dataclass(frozen=True)
 class ChatFormat:
-    """Descrive come è strutturata la riga-header di una chat."""
+    """Describes how a chat's header line is structured."""
 
-    header_regex: Pattern     # gruppi: data, ora, sender, text
-    datetime_format: str      # formato per datetime.strptime
+    header_regex: Pattern     # groups: date, time, sender, text
+    datetime_format: str      # format for datetime.strptime
 
 
 class FormatDetector(ABC):
-    """Strategy: prova a riconoscere un formato da un campione di righe."""
+    """Strategy: try to recognize a format from a sample of lines."""
 
     @abstractmethod
     def detect(self, sample_lines: list[str]) -> ChatFormat | None:
-        """Ritorna il ChatFormat se il campione corrisponde, altrimenti None."""
+        """Return the ChatFormat if the sample matches, otherwise None."""

@@ -27,7 +27,7 @@ def test_cli_anonymize_and_no_system(capsys):
     main([str(FIXTURE), "--to", "csv", "--anonymize", "--no-system"])
     out = capsys.readouterr().out
     rows = [row for row in csv.reader(io.StringIO(out)) if row]
-    # l'anonimizzazione tocca solo la colonna sender, non il testo
+    # anonymization touches only the sender column, not the text
     senders = {row[1] for row in rows[1:]}
     assert senders == {"User1", "User2"}
-    assert "crittografat" not in out  # messaggio di sistema rimosso
+    assert "crittografat" not in out  # system message removed (Italian fixture text)

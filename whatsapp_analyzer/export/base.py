@@ -1,4 +1,4 @@
-"""Astrazione comune agli exporter."""
+"""Common abstraction for exporters."""
 
 from __future__ import annotations
 
@@ -10,4 +10,4 @@ from ..models import Chat
 class Exporter(ABC):
     @abstractmethod
     def export(self, chat: Chat):
-        """Serializza una Chat nel formato dell'exporter."""
+        """Serialize a Chat into the exporter's format."""

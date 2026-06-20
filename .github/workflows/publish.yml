@@ -1,45 +1,45 @@
-name: Publish su PyPI
+name: Publish to PyPI
 
-# Pubblica il pacchetto quando viene creata una nuova release su GitHub.
+# Publish the package when a new release is created on GitHub.
 on:
   release:
     types: [published]
 
 jobs:
   build:
-    name: Build del pacchetto
+    name: Build the package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Installa uv
+      - name: Install uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Build di sdist e wheel
+      - name: Build sdist and wheel
         run: uv build
 
-      - name: Carica gli artifact di dist
+      - name: Upload dist artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
 
   publish:
-    name: Publish su PyPI
+    name: Publish to PyPI
     needs: build
     runs-on: ubuntu-latest
-    # Trusted Publishing: PyPI autentica via OIDC, senza token o password.
+    # Trusted Publishing: PyPI authenticates via OIDC, no token or password.
     environment:
       name: pypi
       url: https://pypi.org/p/whatsapp-chat-analyzer
     permissions:
       id-token: write
     steps:
-      - name: Scarica gli artifact di dist
+      - name: Download dist artifacts
         uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist/
 
-      - name: Publish su PyPI
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

@@ -1,4 +1,4 @@
-"""Registry dei detector + costruzione del datetime_format dal campione."""
+"""Detector registry + building the datetime_format from the sample."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ class DetectorRegistry:
             if fmt is not None:
                 return replace(fmt, datetime_format=self._build_datetime_format(fmt, sample_lines))
         raise FormatDetectionError(
-            "Nessun formato WhatsApp conosciuto riconosciuto nel file."
+            "No known WhatsApp format was recognized in the file."
         )
 
     def _build_datetime_format(self, fmt: ChatFormat, sample_lines: list[str]) -> str:
@@ -45,9 +45,9 @@ class DetectorRegistry:
         return f"{date_part}, {time_part}"
 
     def _is_day_first(self, dates: list[str]) -> bool:
-        # Si guarda quale delle prime due posizioni contiene un valore > 12:
-        # quella è obbligatoriamente il giorno. Se nessuna lo è, il dato è ambiguo
-        # e si ricade sul default del locale (it/eu = giorno per primo).
+        # Look at which of the first two positions holds a value > 12: that one
+        # is necessarily the day. If neither is, the data is ambiguous and we
+        # fall back to the locale default (it/eu = day first).
         for date in dates:
             first, second, *_ = date.split("/")
             if int(first) > 12:
@@ -63,5 +63,5 @@ class DetectorRegistry:
         return any(re.search(r"[APap][Mm]", t) for t in times)
 
     def _has_seconds(self, times: list[str]) -> bool:
-        # si conta solo la parte numerica, ignorando l'eventuale suffisso AM/PM
+        # count only the numeric part, ignoring any AM/PM suffix
         return any(t.split()[0].count(":") == 2 for t in times)

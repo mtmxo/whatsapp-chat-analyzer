@@ -1,29 +1,36 @@
 # Changelog
 
-Tutte le modifiche rilevanti al progetto sono documentate in questo file.
+All notable changes to this project are documented in this file.
 
-Il formato si ispira a [Keep a Changelog](https://keepachangelog.com/it/1.1.0/)
-e il progetto adotta il [versionamento semantico](https://semver.org/lang/it/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+and the project follows [Semantic Versioning](https://semver.org/).
+
+## [Unreleased]
+
+### Changed
+- Translated the whole codebase, comments, docstrings, documentation and tests to
+  English. Functional Italian strings (classifier keywords and the Italian sample
+  fixtures) are kept on purpose to cover the multilingual parsing path.
 
 ## [0.1.1] - 2026-06-13
 
-### Aggiunto
-- File `LICENSE` (MIT).
-- Workflow di CI che esegue i test su Python 3.10, 3.11 e 3.12.
-- Metadati di packaging: classifiers e URL del progetto in `pyproject.toml`.
-- `CONTRIBUTING.md` e `CHANGELOG.md`.
-- Badge nel README.
+### Added
+- `LICENSE` file (MIT).
+- CI workflow running the test suite on Python 3.10, 3.11 and 3.12.
+- Packaging metadata: classifiers and project URLs in `pyproject.toml`.
+- `CONTRIBUTING.md` and `CHANGELOG.md`.
+- Badges in the README.
 
 ## [0.1.0] - 2026-06-13
 
-### Aggiunto
-- Parser a due fasi con riconoscimento automatico del formato (iOS e Android).
-- Disambiguazione delle date `DD/MM` vs `MM/DD` e supporto orario 12h con AM/PM.
-- Modelli dati immutabili `Message` e `Chat`, con tipi `TEXT`/`MEDIA`/`SYSTEM`/`DELETED`.
-- Classificatore multilingua (italiano e inglese) per media, messaggi di sistema ed eliminati.
-- Trasformazioni in fase di parsing: filtri per data/autore/sistema e anonimizzazione dei nomi.
-- Export verso JSON (con round-trip), CSV e `pandas.DataFrame`.
-- CLI `wa-analyzer` per parsing ed export.
+### Added
+- Two-phase parser with automatic format detection (iOS and Android).
+- `DD/MM` vs `MM/DD` date disambiguation and 12h time support with AM/PM.
+- Immutable `Message` and `Chat` data models, with `TEXT`/`MEDIA`/`SYSTEM`/`DELETED` types.
+- Multilingual classifier (Italian and English) for media, system and deleted messages.
+- Parse-time transformations: date/author/system filters and name anonymization.
+- Export to JSON (with round-trip), CSV and `pandas.DataFrame`.
+- `wa-analyzer` CLI for parsing and export.
 
 [0.1.1]: https://github.com/mtmxo/whatsapp-chat-analyzer/releases/tag/v0.1.1
 [0.1.0]: https://github.com/mtmxo/whatsapp-chat-analyzer/releases/tag/v0.1.0

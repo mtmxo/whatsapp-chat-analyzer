@@ -1,4 +1,4 @@
-"""Export/import JSON con schema esplicito, per il round-trip."""
+"""JSON export/import with an explicit schema, for round-tripping."""
 
 from __future__ import annotations
 

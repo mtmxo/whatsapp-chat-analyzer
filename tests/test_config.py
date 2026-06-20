@@ -12,7 +12,7 @@ def test_defaults():
 
 
 def test_transformers_default_is_independent():
-    # default_factory evita la lista condivisa tra istanze
+    # default_factory avoids a list shared across instances
     a = ParserConfig()
     a.transformers.append("x")
     assert ParserConfig().transformers == []

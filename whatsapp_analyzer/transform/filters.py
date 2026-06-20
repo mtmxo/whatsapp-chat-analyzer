@@ -1,4 +1,4 @@
-"""Filtri applicabili durante il parsing."""
+"""Filters applied during parsing."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ class DateRangeFilter(MessageTransformer):
 class AuthorFilter(MessageTransformer):
     def __init__(self, authors: list[str], mode: str = "include"):
         if mode not in {"include", "exclude"}:
-            raise ValueError("mode deve essere 'include' o 'exclude'")
+            raise ValueError("mode must be 'include' or 'exclude'")
         self.authors = set(authors)
         self.mode = mode
 

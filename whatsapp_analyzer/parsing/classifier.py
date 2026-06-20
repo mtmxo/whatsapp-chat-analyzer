@@ -1,4 +1,4 @@
-"""Classificazione del tipo di messaggio con pattern in italiano e inglese."""
+"""Message type classification with Italian and English patterns."""
 
 from __future__ import annotations
 
@@ -11,20 +11,22 @@ from ..models import MediaKind, MessageType
 class MessageClassifier(ABC):
     @abstractmethod
     def classify(self, sender: str | None, text: str) -> tuple[MessageType, MediaKind | None]:
-        """Determina il tipo (e l'eventuale sottotipo media) di un messaggio."""
+        """Determine the type (and optional media subtype) of a message."""
 
 
-# Frasi di "messaggio eliminato" in italiano e inglese.
+# "Deleted message" phrases in Italian and English. These strings must match the
+# literal text WhatsApp writes, so the Italian keywords are intentional.
 _DELETED = re.compile(
     r"questo messaggio è stato eliminato|hai eliminato questo messaggio"
     r"|this message was deleted|you deleted this message",
     re.IGNORECASE,
 )
 
-# Le righe media hanno forma "<tipo> omess*/omitted". L'ordine non conta:
-# si cerca la keyword del sottotipo dentro la riga riconosciuta come media.
+# Media lines look like "<kind> omess*/omitted". Order does not matter: we look
+# for the subtype keyword inside the line already recognized as media.
 _MEDIA = re.compile(r"omess\w+|omitted", re.IGNORECASE)
 
+# Italian/English keywords WhatsApp uses for each media subtype.
 _MEDIA_KINDS = {
     MediaKind.IMAGE: ("immagine", "image"),
     MediaKind.VIDEO: ("video",),
@@ -39,7 +41,7 @@ class MultilingualClassifier(MessageClassifier):
     def classify(self, sender: str | None, text: str) -> tuple[MessageType, MediaKind | None]:
         if sender is None:
             return MessageType.SYSTEM, None
-        stripped = text.strip().lstrip("‎")  # WhatsApp antepone a volte un LRM invisibile
+        stripped = text.strip().lstrip("‎")  # WhatsApp sometimes prepends an invisible LRM
         if _DELETED.search(stripped):
             return MessageType.DELETED, None
         if _MEDIA.search(stripped):

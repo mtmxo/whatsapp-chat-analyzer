@@ -5,148 +5,144 @@
 [![Python](https://img.shields.io/pypi/pyversions/whatsapp-chat-analyzer)](https://pypi.org/project/whatsapp-chat-analyzer/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Parser robusto per le chat WhatsApp esportate in formato `.txt`, con riconoscimento
-automatico del formato, modelli dati puliti ed export verso JSON, CSV e pandas.
+Robust parser for WhatsApp chats exported as `.txt` files, with automatic format
+detection, clean data models and export to JSON, CSV and pandas.
 
-La libreria nasce per essere usata in due modi: come **base solida** su cui costruire
-analisi personalizzate (ti restituisce oggetti Python ordinati) e come **strumento
-pronto all'uso** grazie agli export e a una piccola CLI.
+The library is meant to be used in two ways: as a **solid foundation** to build custom
+analyses on top of (it hands you tidy Python objects), and as a **ready-to-use tool**
+thanks to the exporters and a small CLI.
 
-## Caratteristiche
+## Features
 
-- **Riconoscimento automatico del formato**: iOS e Android, date `DD/MM` o `MM/DD`,
-  anno a 2 o 4 cifre, orario 24h oppure 12h con AM/PM. Il formato si può anche forzare.
-- **Messaggi tipizzati**: ogni messaggio è classificato come `TEXT`, `MEDIA`, `SYSTEM`
-  o `DELETED`, con riconoscimento del sottotipo media (immagine, video, audio, ...).
-  I pattern sono multilingua (italiano e inglese).
-- **Messaggi multi-linea** gestiti correttamente.
-- **Trasformazioni in fase di parsing**: filtri per data/autore/sistema e
-  anonimizzazione dei nomi.
-- **Export**: JSON (con re-import per il round-trip), CSV e `pandas.DataFrame`.
-- **CLI** `wa-analyzer` per convertire una chat senza scrivere codice.
-- **Zero dipendenze obbligatorie** (solo standard library); `pandas` è opzionale.
+- **Automatic format detection**: iOS and Android, `DD/MM` or `MM/DD` dates, 2- or
+  4-digit years, 24h or 12h time with AM/PM. The format can also be forced.
+- **Typed messages**: every message is classified as `TEXT`, `MEDIA`, `SYSTEM` or
+  `DELETED`, with media subtype detection (image, video, audio, ...). The patterns are
+  multilingual (Italian and English).
+- **Multi-line messages** handled correctly.
+- **Parse-time transformations**: date/author/system filters and name anonymization.
+- **Export**: JSON (with re-import for round-tripping), CSV and `pandas.DataFrame`.
+- **CLI** `wa-analyzer` to convert a chat without writing code.
+- **Zero required dependencies** (standard library only); `pandas` is optional.
 
-## Installazione
+## Installation
 
 ```bash
 pip install whatsapp-chat-analyzer
 ```
 
-Per l'export verso `pandas.DataFrame`:
+For `pandas.DataFrame` export:
 
 ```bash
 pip install whatsapp-chat-analyzer[pandas]
 ```
 
-Requisiti: Python 3.10+.
+Requirements: Python 3.10+.
 
-## Uso rapido
+## Quick start
 
 ```python
 from whatsapp_analyzer import parse_file
 
 chat = parse_file("export.txt")
 
-print(len(chat), "messaggi")
-print("Partecipanti:", chat.participants)
+print(len(chat), "messages")
+print("Participants:", chat.participants)
 
 for msg in chat:
     print(msg.timestamp, msg.sender, "->", msg.text)
 ```
 
-Se hai già il contenuto in memoria (ad esempio caricato da un upload):
+If you already have the content in memory (for example loaded from an upload):
 
 ```python
 from whatsapp_analyzer import parse_string
 
-chat = parse_string(testo_della_chat)
+chat = parse_string(chat_text)
 ```
 
-## Come esportare una chat
+## How to export a chat
 
-Esportala dal telefono senza i media:
-**Impostazioni chat → Altro → Esporta chat → Senza file multimediali**. Otterrai un
-file `.txt`. La libreria gestisce automaticamente il BOM utf-8 che WhatsApp aggiunge
-ad alcuni export.
+Export it from your phone without media:
+**Chat settings → More → Export chat → Without media**. You will get a `.txt` file.
+The library automatically handles the utf-8 BOM that WhatsApp adds to some exports.
 
-## I modelli dati
+## The data models
 
 ### `Chat`
 
-Si comporta come una sequenza di `Message` (supporta `len()`, indicizzazione e
-iterazione) e offre alcune comodità:
+It behaves like a sequence of `Message` objects (supports `len()`, indexing and
+iteration) and offers a few conveniences:
 
 ```python
-chat.participants            # set degli autori (esclusi i messaggi di sistema)
-chat.filter(predicate)       # nuova Chat con i soli messaggi che soddisfano il predicato
-chat.to_json()               # -> str (vedi sezione Export)
+chat.participants            # set of authors (system messages excluded)
+chat.filter(predicate)       # new Chat with only the messages matching the predicate
+chat.to_json()               # -> str (see the Export section)
 chat.to_csv()                # -> str
-chat.to_dataframe()          # -> pandas.DataFrame (richiede l'extra pandas)
-Chat.from_json(data)         # ricostruisce una Chat da un export JSON
+chat.to_dataframe()          # -> pandas.DataFrame (requires the pandas extra)
+Chat.from_json(data)         # rebuild a Chat from a JSON export
 ```
 
 ### `Message`
 
-È un oggetto **immutabile** (`frozen` dataclass) con questi campi:
+It is an **immutable** object (`frozen` dataclass) with these fields:
 
-| Campo | Tipo | Note |
-|-------|------|------|
-| `timestamp` | `datetime` | data e ora del messaggio |
-| `sender` | `str \| None` | `None` per i messaggi di sistema (senza autore) |
-| `text` | `str` | corpo del messaggio (per i multi-linea include i `\n`) |
+| Field | Type | Notes |
+|-------|------|-------|
+| `timestamp` | `datetime` | message date and time |
+| `sender` | `str \| None` | `None` for system messages (no author) |
+| `text` | `str` | message body (multi-line ones include the `\n`) |
 | `type` | `MessageType` | `TEXT`, `MEDIA`, `SYSTEM`, `DELETED` |
-| `media_kind` | `MediaKind \| None` | valorizzato solo quando `type == MEDIA` |
+| `media_kind` | `MediaKind \| None` | set only when `type == MEDIA` |
 
-`MediaKind` può valere `IMAGE`, `VIDEO`, `AUDIO`, `DOCUMENT`, `STICKER`, `GIF`.
+`MediaKind` can be `IMAGE`, `VIDEO`, `AUDIO`, `DOCUMENT`, `STICKER`, `GIF`.
 
 ```python
 from whatsapp_analyzer import MessageType
 
-testo = [m for m in chat if m.type == MessageType.TEXT]
+text = [m for m in chat if m.type == MessageType.TEXT]
 media = [m for m in chat if m.type == MessageType.MEDIA]
 ```
 
-## Configurazione
+## Configuration
 
-Tutte le opzioni passano da `ParserConfig`, che funge anche da punto di
-*dependency injection*: se un campo è lasciato a `None`, il parser usa l'implementazione
-di default.
+All options go through `ParserConfig`, which also acts as a *dependency injection*
+point: if a field is left as `None`, the parser uses the default implementation.
 
 ```python
 from whatsapp_analyzer import parse_file, ParserConfig
 
 config = ParserConfig(
-    locale="it",                 # tie-break per le date ambigue (DD/MM vs MM/DD)
-    max_lines_per_message=1000,  # salvaguardia anti file corrotti
-    transformers=[],             # filtri/anonimizzazione (vedi sotto)
+    locale="it",                 # tie-break for ambiguous dates (DD/MM vs MM/DD)
+    max_lines_per_message=1000,  # safeguard against corrupted files
+    transformers=[],             # filters/anonymization (see below)
 )
 
 chat = parse_file("export.txt", config=config)
 ```
 
-Campi disponibili:
+Available fields:
 
-- `chat_format`: forza un formato specifico e salta il riconoscimento automatico.
-- `detectors`: lista di `FormatDetector` personalizzati (default: iOS + Android).
-- `locale`: usato per disambiguare le date quando il giorno è ≤ 12 in entrambe le
-  posizioni. Con `"us"`/`"en_us"` si assume mese per primo, altrimenti giorno per primo.
-- `classifier`: un `MessageClassifier` alternativo.
-- `transformers`: lista di trasformazioni applicate in ordine (vedi sotto).
-- `max_lines_per_message`: oltre questa soglia un messaggio viene troncato e viene
-  emesso un warning (protegge da export corrotti dove l'header non viene più
-  riconosciuto).
+- `chat_format`: force a specific format and skip automatic detection.
+- `detectors`: list of custom `FormatDetector`s (default: iOS + Android).
+- `locale`: used to disambiguate dates when the day is ≤ 12 in both positions. With
+  `"us"`/`"en_us"` month-first is assumed, otherwise day-first.
+- `classifier`: an alternative `MessageClassifier`.
+- `transformers`: list of transformations applied in order (see below).
+- `max_lines_per_message`: beyond this threshold a message is truncated and a warning is
+  emitted (protects against corrupted exports where the header is no longer recognized).
 
-### Forzare il formato
+### Forcing the format
 
-Se hai un export con un formato che il riconoscimento automatico non prende, puoi
-descriverlo a mano:
+If you have an export with a format the automatic detection does not catch, you can
+describe it by hand:
 
 ```python
 import re
 from whatsapp_analyzer import parse_file, ParserConfig
 from whatsapp_analyzer.detection.base import ChatFormat
 
-formato = ChatFormat(
+fmt = ChatFormat(
     header_regex=re.compile(
         r"^(?P<date>\d{2}/\d{2}/\d{4}), (?P<time>\d{2}:\d{2}) - "
         r"(?:(?P<sender>[^:]+): )?(?P<text>.*)$"
@@ -154,13 +150,13 @@ formato = ChatFormat(
     datetime_format="%d/%m/%Y, %H:%M",
 )
 
-chat = parse_file("export.txt", ParserConfig(chat_format=formato))
+chat = parse_file("export.txt", ParserConfig(chat_format=fmt))
 ```
 
-## Filtri e anonimizzazione
+## Filters and anonymization
 
-I `transformer` vengono applicati a ogni messaggio nell'ordine in cui li metti nella
-lista. Ognuno può modificare il messaggio o scartarlo.
+`transformer`s are applied to every message in the order you put them in the list. Each
+one can modify the message or drop it.
 
 ```python
 from datetime import datetime
@@ -171,73 +167,73 @@ from whatsapp_analyzer.transform.filters import (
 from whatsapp_analyzer.transform.anonymizer import Anonymizer
 
 config = ParserConfig(transformers=[
-    SystemMessageFilter(),                       # rimuove i messaggi di sistema
-    DateRangeFilter(start=datetime(2024, 1, 1)), # solo dal 2024 in poi
-    AuthorFilter(["Mario"], mode="include"),     # solo i messaggi di Mario
+    SystemMessageFilter(),                       # drop system messages
+    DateRangeFilter(start=datetime(2024, 1, 1)), # only from 2024 onwards
+    AuthorFilter(["Mario"], mode="include"),     # only Mario's messages
     Anonymizer(),                                # Mario -> User1, Luigi -> User2, ...
 ])
 
 chat = parse_file("export.txt", config=config)
 ```
 
-Note:
+Notes:
 
-- **L'ordine conta.** Di norma conviene filtrare prima e anonimizzare per ultimo.
-- `AuthorFilter` accetta `mode="include"` o `mode="exclude"`.
-- `Anonymizer` sostituisce **solo il campo `sender`** con un alias stabile per tutta
-  la chat; non tocca il testo dei messaggi.
+- **Order matters.** As a rule of thumb, filter first and anonymize last.
+- `AuthorFilter` accepts `mode="include"` or `mode="exclude"`.
+- `Anonymizer` replaces **only the `sender` field** with a stable alias for the whole
+  chat; it does not touch the message text.
 
 ## Export
 
 ```python
 chat = parse_file("export.txt")
 
-# JSON (timestamp in ISO 8601, enum come stringhe)
-testo_json = chat.to_json()
+# JSON (timestamps in ISO 8601, enums as strings)
+json_text = chat.to_json()
 
-# Round-trip: ricarica senza ri-parsare il .txt
+# Round-trip: reload without re-parsing the .txt
 from whatsapp_analyzer import Chat
-chat2 = Chat.from_json(testo_json)
+chat2 = Chat.from_json(json_text)
 
-# CSV (una riga per messaggio)
-testo_csv = chat.to_csv()
+# CSV (one row per message)
+csv_text = chat.to_csv()
 
-# pandas (richiede l'extra [pandas])
+# pandas (requires the [pandas] extra)
 df = chat.to_dataframe()
 ```
 
-Le colonne di CSV e DataFrame sono: `timestamp`, `sender`, `text`, `type`, `media_kind`.
+The CSV and DataFrame columns are: `timestamp`, `sender`, `text`, `type`, `media_kind`.
 
 ## CLI
 
-Dopo l'installazione è disponibile il comando `wa-analyzer`:
+After installation the `wa-analyzer` command is available:
 
 ```bash
-# JSON su stdout
+# JSON to stdout
 wa-analyzer export.txt --to json
 
-# CSV su file, escludendo i messaggi di sistema e anonimizzando gli autori
+# CSV to a file, dropping system messages and anonymizing authors
 wa-analyzer export.txt --to csv --out chat.csv --no-system --anonymize
 ```
 
-Opzioni:
+Options:
 
-| Flag | Descrizione |
+| Flag | Description |
 |------|-------------|
-| `--to {json,csv}` | formato di export (default: `json`) |
-| `--out PATH` | file di output (default: stdout) |
-| `--anonymize` | sostituisce i nomi degli autori |
-| `--no-system` | esclude i messaggi di sistema |
+| `--to {json,csv}` | export format (default: `json`) |
+| `--out PATH` | output file (default: stdout) |
+| `--anonymize` | replace author names |
+| `--no-system` | drop system messages |
 
-## Estendere la libreria
+## Extending the library
 
-L'architettura è pensata per essere estesa senza modificare il codice esistente:
+The architecture is meant to be extended without touching the existing code:
 
-- nuovo formato → implementa un `FormatDetector` e passalo in `ParserConfig(detectors=...)`;
-- nuova trasformazione → estendi `MessageTransformer`;
-- nuovo export → estendi `Exporter`.
+- new format → implement a `FormatDetector` and pass it in `ParserConfig(detectors=...)`;
+- new transformation → extend `MessageTransformer`;
+- new export → extend `Exporter`.
 
-Esempio di transformer personalizzato:
+Example of a custom transformer:
 
 ```python
 from dataclasses import replace
@@ -249,6 +245,6 @@ class UppercaseTransformer(MessageTransformer):
         return replace(msg, text=msg.text.upper())
 ```
 
-## Licenza
+## License
 
 MIT.

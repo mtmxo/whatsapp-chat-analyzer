@@ -1,4 +1,4 @@
-"""Parser a due fasi: si determina il formato, poi si parsano le righe."""
+"""Two-phase parser: detect the format, then parse the lines."""
 
 from __future__ import annotations
 
@@ -11,13 +11,13 @@ from ..detection.registry import DetectorRegistry
 from ..models import Chat, Message
 from .classifier import MultilingualClassifier
 
-# Numero di righe-header campionate per la detection del formato.
+# Number of header lines sampled for format detection.
 _SAMPLE_SIZE = 50
 
 
 @dataclass
 class _RawMessage:
-    """Messaggio grezzo in costruzione, prima di classificazione e transformer."""
+    """A raw message under construction, before classification and transformers."""
 
     timestamp: datetime
     sender: str | None
@@ -52,8 +52,8 @@ class WhatsAppParser:
         for line in lines:
             match = chat_format.header_regex.match(line)
             if match:
-                # Normalizza lo spazio prima di AM/PM così da combaciare con "%p"
-                # (alcuni export scrivono "9:36PM", altri "9:36 PM").
+                # Normalize the space before AM/PM so it matches "%p"
+                # (some exports write "9:36PM", others "9:36 PM").
                 raw_time = match.group("time").upper().replace("AM", " AM").replace("PM", " PM")
                 raw_time = " ".join(raw_time.split())
                 current = _RawMessage(
@@ -66,12 +66,12 @@ class WhatsAppParser:
                 )
                 messages.append(current)
             elif current is not None:
-                # Riga di continuazione: appartiene al messaggio aperto.
-                # La salvaguardia evita di accodare all'infinito su file corrotti.
+                # Continuation line: it belongs to the open message.
+                # The safeguard prevents appending forever on corrupted files.
                 if len(current.lines) >= self.config.max_lines_per_message:
                     if not current.truncated:
                         warnings.warn(
-                            "Messaggio troncato: superato max_lines_per_message "
+                            "Message truncated: exceeded max_lines_per_message "
                             f"({self.config.max_lines_per_message})."
                         )
                         current.truncated = True

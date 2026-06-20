@@ -1,4 +1,4 @@
-"""Export verso pandas.DataFrame. pandas è una dipendenza opzionale."""
+"""Export to pandas.DataFrame. pandas is an optional dependency."""
 
 from __future__ import annotations
 
@@ -10,10 +10,10 @@ class DataFrameExporter(Exporter):
     def export(self, chat: Chat):
         try:
             import pandas as pd
-        except ImportError as exc:  # messaggio chiaro se l'extra non è installato
+        except ImportError as exc:  # clear message if the extra is not installed
             raise ImportError(
-                "L'export su DataFrame richiede pandas. "
-                "Installa con: pip install whatsapp-chat-analyzer[pandas]"
+                "DataFrame export requires pandas. "
+                "Install it with: pip install whatsapp-chat-analyzer[pandas]"
             ) from exc
         return pd.DataFrame(
             {

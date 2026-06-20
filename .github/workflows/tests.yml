@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    name: Test su Python ${{ matrix.python-version }}
+    name: Test on Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -16,11 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Installa uv
+      - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Esegui la suite di test
-        # gli extra dev e pandas servono per pytest e per il test di export su DataFrame
+      - name: Run the test suite
+        # the dev and pandas extras are needed for pytest and the DataFrame export test
         run: uv run --extra dev --extra pandas pytest -v

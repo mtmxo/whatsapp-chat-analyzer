@@ -1,9 +1,9 @@
-"""Eccezioni del modulo di parsing."""
+"""Exceptions raised by the parsing module."""
 
 
 class ParseError(Exception):
-    """Errore generico durante il parsing di una chat."""
+    """Generic error while parsing a chat."""
 
 
 class FormatDetectionError(ParseError):
-    """Nessun formato conosciuto riconosciuto nel file."""
+    """No known format was recognized in the file."""

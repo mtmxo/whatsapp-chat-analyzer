@@ -7,12 +7,12 @@ def classify(text, sender="Mario"):
 
 
 def test_plain_text():
-    assert classify("ciao come stai") == (MessageType.TEXT, None)
+    assert classify("hello how are you") == (MessageType.TEXT, None)
 
 
 def test_system_message_has_no_sender():
-    # sender None => messaggio di sistema, a prescindere dal testo
-    assert classify("Mario ha aggiunto Luigi", sender=None) == (MessageType.SYSTEM, None)
+    # sender None => system message, regardless of the text
+    assert classify("Mario added Luigi", sender=None) == (MessageType.SYSTEM, None)
 
 
 def test_deleted_italian():

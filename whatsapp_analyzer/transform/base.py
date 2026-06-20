@@ -1,4 +1,4 @@
-"""Astrazione comune a filtri e trasformazioni."""
+"""Common abstraction for filters and transformations."""
 
 from __future__ import annotations
 
@@ -10,4 +10,4 @@ from ..models import Message
 class MessageTransformer(ABC):
     @abstractmethod
     def apply(self, msg: Message) -> Message | None:
-        """Ritorna il messaggio (eventualmente modificato) o None per scartarlo."""
+        """Return the (possibly modified) message, or None to drop it."""

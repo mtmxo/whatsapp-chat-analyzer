@@ -1,4 +1,4 @@
-"""Modelli dati del parser: solo dati, nessuna logica di parsing."""
+"""Parser data models: plain data, no parsing logic."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from typing import Callable, Iterator
 class MessageType(Enum):
     TEXT = "text"
     MEDIA = "media"
-    SYSTEM = "system"      # join/leave, cambio gruppo, crittografia, ...
+    SYSTEM = "system"      # join/leave, group changes, encryption notices, ...
     DELETED = "deleted"
 
 
@@ -27,14 +27,14 @@ class MediaKind(Enum):
 @dataclass(frozen=True)
 class Message:
     timestamp: datetime
-    sender: str | None        # None per i messaggi di sistema (senza autore)
+    sender: str | None        # None for system messages (no author)
     text: str
     type: MessageType
-    media_kind: MediaKind | None = None   # valorizzato solo se type == MEDIA
+    media_kind: MediaKind | None = None   # set only when type == MEDIA
 
 
 class Chat:
-    """Contenitore di messaggi che si comporta come una sequenza."""
+    """A container of messages that behaves like a sequence."""
 
     def __init__(self, messages: list[Message]):
         self.messages = messages

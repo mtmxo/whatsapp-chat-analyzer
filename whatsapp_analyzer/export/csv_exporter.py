@@ -1,4 +1,4 @@
-"""Export CSV piatto, una riga per messaggio."""
+"""Flat CSV export, one row per message."""
 
 from __future__ import annotations
 

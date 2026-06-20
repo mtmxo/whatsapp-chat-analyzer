@@ -1,4 +1,4 @@
-"""Anonimizzazione del solo campo sender, con mappatura coerente per la chat."""
+"""Anonymize only the sender field, with a consistent mapping across the chat."""
 
 from __future__ import annotations
 

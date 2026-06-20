@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "whatsapp-chat-analyzer"
 version = "0.1.1"
-description = "Parser e analisi per chat WhatsApp esportate in formato .txt"
+description = "Parser and analysis for WhatsApp chats exported as .txt files"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

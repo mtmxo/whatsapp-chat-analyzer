@@ -1,47 +1,48 @@
-# Come contribuire
+# Contributing
 
-Grazie per l'interesse nel progetto! Ecco come muoverti.
+Thanks for your interest in the project! Here is how to get started.
 
-## Ambiente di sviluppo
+## Development environment
 
-Il progetto usa [uv](https://docs.astral.sh/uv/) per gestire ambiente e dipendenze.
+The project uses [uv](https://docs.astral.sh/uv/) to manage the environment and dependencies.
 
 ```bash
-# clona il repo
+# clone the repo
 git clone https://github.com/mtmxo/whatsapp-chat-analyzer.git
 cd whatsapp-chat-analyzer
 
-# crea il virtualenv e installa le dipendenze di sviluppo
+# create the virtualenv and install the dev dependencies
 uv venv
 uv pip install -e ".[dev,pandas]"
 ```
 
-## Eseguire i test
+## Running the tests
 
 ```bash
 uv run pytest
 ```
 
-La suite deve restare verde. Ogni nuova funzionalità o correzione va accompagnata dai
-relativi test.
+The suite must stay green. Every new feature or fix should come with its own tests.
 
-## Stile del codice
+## Code style
 
-- Si seguono le convenzioni PEP 8.
-- I commenti vanno scritti in italiano e solo dove il codice non è auto-esplicativo.
-- L'architettura segue i principi SOLID: per aggiungere un formato, un filtro o un
-  exporter si estende l'astrazione corrispondente (`FormatDetector`,
-  `MessageTransformer`, `Exporter`) senza modificare il codice esistente.
+- Follow the PEP 8 conventions.
+- Code, comments and documentation are written in English, and comments only where the
+  code is not self-explanatory. Functional Italian strings (classifier keywords and the
+  Italian sample fixtures) are kept on purpose to cover the multilingual parsing path.
+- The architecture follows the SOLID principles: to add a format, a filter or an
+  exporter you extend the matching abstraction (`FormatDetector`,
+  `MessageTransformer`, `Exporter`) without changing the existing code.
 
-## Workflow per le modifiche
+## Change workflow
 
-1. Apri una issue per discutere la modifica, se non banale.
-2. Crea un branch dedicato.
-3. Sviluppa in TDD: prima il test, poi l'implementazione.
-4. Verifica che `uv run pytest` sia verde.
-5. Apri una pull request descrivendo cosa cambia e perché.
+1. Open an issue to discuss the change, if it is not trivial.
+2. Create a dedicated branch.
+3. Develop with TDD: test first, then implementation.
+4. Make sure `uv run pytest` is green.
+5. Open a pull request describing what changes and why.
 
-## Segnalare un bug
+## Reporting a bug
 
-Apri una [issue](https://github.com/mtmxo/whatsapp-chat-analyzer/issues) includendo,
-se possibile, un piccolo estratto di chat che riproduce il problema (anonimizzato).
+Open an [issue](https://github.com/mtmxo/whatsapp-chat-analyzer/issues) including, if
+possible, a small (anonymized) chat snippet that reproduces the problem.

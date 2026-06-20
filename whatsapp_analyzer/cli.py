@@ -1,4 +1,4 @@
-"""CLI minima: parsing + export, con qualche filtro da flag."""
+"""Minimal CLI: parsing + export, with a few flag-driven filters."""
 
 from __future__ import annotations
 
@@ -15,23 +15,23 @@ from .transform.filters import SystemMessageFilter
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="wa-analyzer",
-        description="Parsa una chat WhatsApp ed esportala in JSON o CSV.",
+        description="Parse a WhatsApp chat and export it to JSON or CSV.",
     )
-    parser.add_argument("input", help="file .txt esportato da WhatsApp")
+    parser.add_argument("input", help=".txt file exported from WhatsApp")
     parser.add_argument("--to", choices=["json", "csv"], default="json",
-                        help="formato di export (default: json)")
-    parser.add_argument("--out", help="file di output (default: stdout)")
+                        help="export format (default: json)")
+    parser.add_argument("--out", help="output file (default: stdout)")
     parser.add_argument("--anonymize", action="store_true",
-                        help="sostituisce i nomi degli autori")
+                        help="replace author names")
     parser.add_argument("--no-system", action="store_true",
-                        help="esclude i messaggi di sistema")
+                        help="drop system messages")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
 
-    # L'ordine dei transformer è esplicito: prima si filtra, poi si anonimizza.
+    # Transformer order is explicit: filter first, then anonymize.
     transformers = []
     if args.no_system:
         transformers.append(SystemMessageFilter())

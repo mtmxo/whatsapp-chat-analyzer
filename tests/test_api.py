@@ -6,7 +6,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 
 def test_parse_string_returns_chat():
-    chat = parse_string("12/06/24, 21:35 - Mario: ciao")
+    chat = parse_string("12/06/24, 21:35 - Mario: hello")
     assert isinstance(chat, Chat)
     assert chat[0].sender == "Mario"
 
@@ -29,7 +29,7 @@ def test_parse_ios_english_media():
     from whatsapp_analyzer.models import MediaKind, MessageType
     chat = parse_file(FIXTURES / "ios_en.txt")
     assert chat[0].sender == "John"
-    # 9:36:00 PM in formato 12h deve diventare le 21:36
+    # 9:34:05 PM in 12h format must become 21:34:05
     assert chat[0].timestamp == datetime(2024, 6, 12, 21, 34, 5)
     assert chat[-1].type == MessageType.MEDIA
     assert chat[-1].media_kind == MediaKind.IMAGE
