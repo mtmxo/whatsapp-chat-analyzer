@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .analysis.activity import ActivityAnalyzer, ActivityReport
+from .analysis.content import ContentAnalyzer, ContentReport
+from .analysis.statistics import ChatStatistics, StatisticsAnalyzer, UserStats
 from .config import ParserConfig
 from .models import Chat, MediaKind, Message, MessageType
 from .parsing.parser import WhatsAppParser
@@ -18,6 +21,13 @@ __all__ = [
     "MessageType",
     "MediaKind",
     "ParserConfig",
+    "StatisticsAnalyzer",
+    "ChatStatistics",
+    "UserStats",
+    "ActivityAnalyzer",
+    "ActivityReport",
+    "ContentAnalyzer",
+    "ContentReport",
 ]
 
 

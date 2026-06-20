@@ -71,3 +71,15 @@ class Chat:
     def to_dataframe(self):
         from .export.dataframe_exporter import DataFrameExporter
         return DataFrameExporter().export(self)
+
+    def statistics(self):
+        from .analysis.statistics import StatisticsAnalyzer
+        return StatisticsAnalyzer().analyze(self)
+
+    def activity(self):
+        from .analysis.activity import ActivityAnalyzer
+        return ActivityAnalyzer().analyze(self)
+
+    def content(self, stopwords: set[str] | None = None):
+        from .analysis.content import ContentAnalyzer
+        return ContentAnalyzer(stopwords=stopwords).analyze(self)
