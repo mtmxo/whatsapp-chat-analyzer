@@ -11,7 +11,7 @@ from .config import ParserConfig
 from .models import Chat, MediaKind, Message, MessageType
 from .parsing.parser import WhatsAppParser
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 __all__ = [
     "parse_file",

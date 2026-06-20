@@ -5,13 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] - 2026-06-21
 
 ### Added
 - Analysis layer: `StatisticsAnalyzer` (per-user and overall counts),
   `ActivityAnalyzer` (message volume by hour/weekday/date) and `ContentAnalyzer`
   (word frequencies and emoji usage), with `Chat.statistics()`, `Chat.activity()`
-  and `Chat.content()` shortcuts.
+  and `Chat.content()` shortcuts. Emoji are counted per grapheme, so ZWJ sequences,
+  skin-tone modifiers and flags count as a single emoji.
 
 ### Changed
 - Translated the whole codebase, comments, docstrings, documentation and tests to
@@ -38,5 +39,6 @@ and the project follows [Semantic Versioning](https://semver.org/).
 - Export to JSON (with round-trip), CSV and `pandas.DataFrame`.
 - `wa-analyzer` CLI for parsing and export.
 
+[0.2.0]: https://github.com/mtmxo/whatsapp-chat-analyzer/releases/tag/v0.2.0
 [0.1.1]: https://github.com/mtmxo/whatsapp-chat-analyzer/releases/tag/v0.1.1
 [0.1.0]: https://github.com/mtmxo/whatsapp-chat-analyzer/releases/tag/v0.1.0
