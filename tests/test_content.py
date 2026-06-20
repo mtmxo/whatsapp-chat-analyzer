@@ -63,3 +63,29 @@ def test_empty_chat():
     report = ContentAnalyzer().analyze(Chat([]))
     assert report.top_words() == []
     assert report.emoji_counts == {}
+
+
+def test_skin_tone_modifier_counts_as_one():
+    report = ContentAnalyzer().analyze(Chat([_text("nice 👍🏽")]))
+    assert report.emoji_counts == {"👍🏽": 1}
+
+
+def test_zwj_sequence_counts_as_one():
+    # a family emoji is several code points joined by ZWJ; it is one emoji
+    report = ContentAnalyzer().analyze(Chat([_text("family 👨‍👩‍👧")]))
+    assert report.emoji_counts == {"👨‍👩‍👧": 1}
+
+
+def test_variation_selector_kept_in_key():
+    report = ContentAnalyzer().analyze(Chat([_text("love ❤️")]))
+    assert report.emoji_counts == {"❤️": 1}
+
+
+def test_flag_pair_counts_as_one():
+    report = ContentAnalyzer().analyze(Chat([_text("italy 🇮🇹")]))
+    assert report.emoji_counts == {"🇮🇹": 1}
+
+
+def test_distinct_adjacent_emoji_still_split():
+    report = ContentAnalyzer().analyze(Chat([_text("😀😀")]))
+    assert report.emoji_counts == {"😀": 2}

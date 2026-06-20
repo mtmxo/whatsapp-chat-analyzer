@@ -13,14 +13,21 @@ from .base import Analyzer
 # punctuation are dropped. \w would also match digits and "_", which we don't want.
 _WORD = re.compile(r"[^\W\d_]+", re.UNICODE)
 
-# Emoji are matched by their main Unicode blocks rather than an exhaustive table:
-# pictographs/supplemental/extended-A, misc symbols + dingbats, and regional
-# indicators (flags). It is intentionally approximate but dependency-free.
-_EMOJI = re.compile(
-    "[\U0001F300-\U0001FAFF"
-    "\U00002600-\U000027BF"
-    "\U0001F1E6-\U0001F1FF]"
-)
+# Emoji are matched by their main Unicode blocks rather than an exhaustive table
+# (pictographs/supplemental/extended-A and misc symbols + dingbats); intentionally
+# approximate but dependency-free.
+#
+# A single visible emoji can span several code points, so we match the whole cluster
+# as one token, otherwise things like 👍🏽 or a 👨‍👩‍👧 family would be over-counted:
+#   - a base symbol optionally followed by skin-tone modifiers and/or VS16 (FE0F),
+#   - that element repeated when joined by ZWJ (U+200D),
+#   - flags, which are a pair of regional indicators, handled separately.
+_BASE = "[\U0001F300-\U0001FAFF\U00002600-\U000027BF]"
+_MODIFIER = "[\U0001F3FB-\U0001F3FF\uFE0F]"   # skin-tone modifiers + VS16
+_ELEMENT = f"{_BASE}{_MODIFIER}*"
+_ZWJ = "\u200d"  # zero-width joiner
+_FLAG = "[\U0001F1E6-\U0001F1FF]{2}"
+_EMOJI = re.compile(f"{_FLAG}|{_ELEMENT}(?:{_ZWJ}{_ELEMENT})*")
 
 
 @dataclass(frozen=True)
