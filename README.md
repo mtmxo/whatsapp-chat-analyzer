@@ -21,6 +21,8 @@ thanks to the exporters and a small CLI.
   multilingual (Italian and English).
 - **Multi-line messages** handled correctly.
 - **Parse-time transformations**: date/author/system filters and name anonymization.
+- **Analysis**: per-user statistics, temporal activity (by hour/weekday/date) and
+  content analysis (word frequencies and emoji usage).
 - **Export**: JSON (with re-import for round-tripping), CSV and `pandas.DataFrame`.
 - **CLI** `wa-analyzer` to convert a chat without writing code.
 - **Zero required dependencies** (standard library only); `pandas` is optional.
@@ -183,6 +185,46 @@ Notes:
 - `Anonymizer` replaces **only the `sender` field** with a stable alias for the whole
   chat; it does not touch the message text.
 
+## Analysis
+
+The library ships three analyzers. Each one takes a `Chat` and returns an immutable
+report; the `Chat` shortcuts are the easiest way in.
+
+```python
+chat = parse_file("export.txt")
+
+# Per-user and overall statistics
+stats = chat.statistics()
+print(stats.message_count, "messages,", stats.system_count, "system")
+for sender, user in stats.per_user.items():
+    print(sender, user.message_count, user.word_count, user.media_count)
+
+# Temporal activity
+activity = chat.activity()
+print("Most active hour:", activity.most_active_hour)
+print("Messages on Mondays:", activity.by_weekday.get(0, 0))   # Monday == 0
+
+# Content: word frequencies and emoji
+content = chat.content(stopwords={"the", "a", "and"})
+print(content.top_words(10))    # [("hello", 42), ...]
+print(content.top_emojis(5))    # [("😂", 17), ...]
+```
+
+`statistics()` exposes `ChatStatistics` (`message_count`, `system_count`,
+`first_timestamp`, `last_timestamp` and a `per_user` map of `UserStats`).
+`activity()` returns an `ActivityReport` with `by_hour`, `by_weekday`, `by_date` maps
+plus `most_active_hour`/`most_active_weekday`. `content()` returns a `ContentReport`
+whose `top_words(n)` and `top_emojis(n)` give the most frequent items; word matching is
+Unicode-aware, lowercased, and ignores numbers, punctuation and non-text messages.
+
+Each analyzer can also be used directly (for example with a custom configuration):
+
+```python
+from whatsapp_analyzer import ContentAnalyzer
+
+report = ContentAnalyzer(stopwords={"the", "a"}).analyze(chat)
+```
+
 ## Export
 
 ```python
@@ -231,7 +273,8 @@ The architecture is meant to be extended without touching the existing code:
 
 - new format → implement a `FormatDetector` and pass it in `ParserConfig(detectors=...)`;
 - new transformation → extend `MessageTransformer`;
-- new export → extend `Exporter`.
+- new export → extend `Exporter`;
+- new analysis → extend `Analyzer`.
 
 Example of a custom transformer:
 

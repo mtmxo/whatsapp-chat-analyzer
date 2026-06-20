@@ -7,6 +7,12 @@ and the project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Analysis layer: `StatisticsAnalyzer` (per-user and overall counts),
+  `ActivityAnalyzer` (message volume by hour/weekday/date) and `ContentAnalyzer`
+  (word frequencies and emoji usage), with `Chat.statistics()`, `Chat.activity()`
+  and `Chat.content()` shortcuts.
+
 ### Changed
 - Translated the whole codebase, comments, docstrings, documentation and tests to
   English. Functional Italian strings (classifier keywords and the Italian sample
